@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 const app: HTMLElement | null = document.getElementById("app");
 const canvas: HTMLCanvasElement = document.createElement("canvas");
 const ctx: CanvasRenderingContext2D | null = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -16,29 +17,32 @@ let FPS: number = 0;
 
 const player = {
   size: { width: 32, height: 32 },
+  position: { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 },
   color: "green",
 };
 
 function update(deltaTime: number): void {
   FPS = Math.round(1000 / deltaTime);
-  console.log(`FPS: ${FPS}`);
 }
 
 function render(): void {
   if (!ctx) return;
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-  ctx.fillStyle = "green";
+  ctx.fillStyle = player.color;
   ctx.fillRect(
-    CANVAS_WIDTH / 2 - player.size.width / 2,
-    CANVAS_HEIGHT / 2 - player.size.height / 2,
+    player.position.x - player.size.width / 2,
+    player.position.y - player.size.height / 2,
     32,
     32
   );
 }
 
+// The value passed from requestAnimationFrame is a timestamp
+// not the delta time between frames, we need to calculate it ourselves
+// delta time: time difference between current frame and last frame
 function gameLoop(timestamp: number): void {
-  if (!lastTime) lastTime = timestamp;
+  if (!lastTime) lastTime = timestamp; // Initialize lastTime on the first frame
   const deltaTime = timestamp - lastTime;
   lastTime = timestamp;
 
