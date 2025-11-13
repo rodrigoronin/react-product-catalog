@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Player } from "../entities/Player";
+import { isMoving, getDirections } from "../input/InputManager";
+
 const app: HTMLElement | null = document.getElementById("app");
 const canvas: HTMLCanvasElement = document.createElement("canvas");
 const ctx: CanvasRenderingContext2D | null = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -13,16 +15,19 @@ canvas.height = CANVAS_HEIGHT;
 canvas.style.backgroundColor = "#302F2F";
 
 let lastTime: number = 0;
-let FPS: number = 0;
 
-const player = {
-  size: { width: 32, height: 32 },
+const player = new Player({
   position: { x: CANVAS_WIDTH / 2, y: CANVAS_HEIGHT / 2 },
+  size: { width: 32, height: 32 },
+  speed: 100,
   color: "green",
-};
+});
 
 function update(deltaTime: number): void {
-  FPS = Math.round(1000 / deltaTime);
+  if (deltaTime > 0) {
+    const dir = getDirections();
+    player.update(deltaTime, dir);
+  }
 }
 
 function render(): void {
@@ -30,12 +35,7 @@ function render(): void {
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
   ctx.fillStyle = player.color;
-  ctx.fillRect(
-    player.position.x - player.size.width / 2,
-    player.position.y - player.size.height / 2,
-    32,
-    32
-  );
+  ctx.fillRect(player.position.x, player.position.y, player.size.width, player.size.height);
 }
 
 // The value passed from requestAnimationFrame is a timestamp

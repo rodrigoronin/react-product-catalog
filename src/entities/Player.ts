@@ -31,14 +31,14 @@ export class Player {
     let moveX: number = 0;
     let moveY: number = 0;
 
-    if (directions.left === true) moveX -= 1;
-    if (directions.right === true) moveX += 1;
-    if (directions.up === true) moveY -= 1;
-    if (directions.down === true) moveY += 1;
+    if (directions.left) moveX -= 1;
+    if (directions.right) moveX += 1;
+    if (directions.up) moveY -= 1;
+    if (directions.down) moveY += 1;
 
     // Normalize movement vector when moving diagonally
-    const magnitude = Math.sqrt(moveX * moveX + moveY * moveY);
-    if (magnitude > 0) {
+    const magnitude = Math.hypot(moveX, moveY);
+    if (magnitude !== 0) {
       moveX /= magnitude;
       moveY /= magnitude;
     }
