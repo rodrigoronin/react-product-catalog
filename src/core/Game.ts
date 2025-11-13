@@ -1,8 +1,10 @@
 import { Player } from "../entities/Player";
-import { isMoving, getDirections } from "../input/InputManager";
+import { getDirections } from "../input/InputManager";
+import { renderGrid } from "../core/TrainingRoom";
 
 const app: HTMLElement | null = document.getElementById("app");
-const canvas: HTMLCanvasElement = document.createElement("canvas");
+export const canvas: HTMLCanvasElement = document.createElement("canvas");
+canvas.setAttribute("id", "canvas");
 const ctx: CanvasRenderingContext2D | null = canvas.getContext("2d") as CanvasRenderingContext2D;
 
 if (app) app.appendChild(canvas);
@@ -32,10 +34,18 @@ function update(deltaTime: number): void {
 
 function render(): void {
   if (!ctx) return;
+
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+  renderGrid(ctx);
+
   ctx.fillStyle = player.color;
-  ctx.fillRect(player.position.x, player.position.y, player.size.width, player.size.height);
+  ctx.fillRect(
+    player.position.x - player.size.width / 2,
+    player.position.y - player.size.height / 2,
+    player.size.width,
+    player.size.height
+  );
 }
 
 // The value passed from requestAnimationFrame is a timestamp
