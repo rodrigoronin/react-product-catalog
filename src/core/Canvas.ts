@@ -3,35 +3,51 @@ const displayCtx: CanvasRenderingContext2D = displayCanvas.getContext(
   "2d"
 ) as CanvasRenderingContext2D;
 
-const GAME_WIDTH: number = 480;
-const GAME_HEIGHT: number = 270;
-const DISPLAY_WIDTH: number = 1280;
-const DISPLAY_HEIGHT: number = 720;
+const GAME_WIDTH: number = 640;
+const GAME_HEIGHT: number = 360;
 
+// inner canvas (logic resolution)
 const gameCanvas: HTMLCanvasElement = document.createElement("canvas");
-const gameCtx: CanvasRenderingContext2D | null = gameCanvas.getContext("2d");
+const gameCtx: CanvasRenderingContext2D = gameCanvas.getContext("2d") as CanvasRenderingContext2D;
 
 gameCanvas.width = GAME_WIDTH;
 gameCanvas.height = GAME_HEIGHT;
 
-displayCanvas.width = DISPLAY_WIDTH;
-displayCanvas.height = DISPLAY_HEIGHT;
 displayCanvas.style.backgroundColor = "#302F2F";
 
+// --- RESIZE FUNCTION ---
+// Adjusts the real size of the outer canvas to fill the entire screen
+function resizeDisplayCanvas() {
+  displayCanvas.width = window.innerWidth;
+  displayCanvas.height = window.innerHeight;
+}
+
+// We call at the start and whenever the screen changes size
+resizeDisplayCanvas();
+window.addEventListener("resize", resizeDisplayCanvas);
+
+// --- EXTERNAL RENDER (copies gameCanvas to displayCanvas, scalling) ---
 function renderToDisplay() {
+  const DISPLAY_WIDTH: number = displayCanvas.width;
+  const DISPLAY_HEIGHT: number = displayCanvas.height;
+
+  // Full scale (pixel perfect)
   const scale: number = Math.floor(
     Math.min(DISPLAY_WIDTH / GAME_WIDTH, DISPLAY_HEIGHT / GAME_HEIGHT)
   );
 
   const scaledW = GAME_WIDTH * scale;
   const scaledH = GAME_HEIGHT * scale;
-  let offsetX: number = 0;
-  let offsetY: number = 0;
 
-  if (scaledW < DISPLAY_WIDTH) offsetX = (DISPLAY_WIDTH - scaledW) / 2;
-  if (scaledH < DISPLAY_HEIGHT) offsetY = (DISPLAY_HEIGHT - scaledH) / 2;
+  // centralizes
+  const offsetX: number = (DISPLAY_WIDTH - scaledW) / 2;
+  const offsetY: number = (DISPLAY_HEIGHT - scaledH) / 2;
 
+  displayCtx.clearRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+
+  // disables blur when upscaling
   displayCtx.imageSmoothingEnabled = false;
+  gameCtx.imageSmoothingEnabled = false;
 
   displayCtx.drawImage(
     gameCanvas,
@@ -41,8 +57,8 @@ function renderToDisplay() {
     GAME_HEIGHT,
     offsetX,
     offsetY,
-    GAME_WIDTH * scale,
-    GAME_HEIGHT * scale
+    scaledW,
+    scaledH
   );
 }
 
