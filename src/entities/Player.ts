@@ -22,23 +22,29 @@ export class Player {
   };
   speed!: number;
   color!: string;
+  #colliderSize = {
+    width: 20,
+    height: 42,
+  };
+  #collider = {
+    offsetX: 0,
+    offsetY: 0,
+    width: 0,
+    height: 0,
+  };
 
   constructor(playerData: IPlayer) {
     Object.assign(this, playerData);
+
+    this.#collider.offsetX = this.size.width / 2 - this.#colliderSize.width / 2;
+    this.#collider.offsetY = this.size.height / 2 - this.#colliderSize.height;
+    this.#collider.width = this.#colliderSize.width;
+    this.#collider.height = this.#colliderSize.height;
   }
 
-  getBounds() {
-    const top: number = this.position.y;
-    const left: number = this.position.x;
-    const right: number = this.position.x + this.size.width;
-    const bottom: number = this.position.y + this.size.height;
-
-    return {
-      top,
-      left,
-      bottom,
-      right,
-    };
+  // I will need to redo this with your help, sensei
+  getBounds(newX: number, newY: number) {
+    return {};
   }
 
   update(deltaTime: number, directions: IDirections) {
