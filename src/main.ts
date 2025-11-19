@@ -1,10 +1,11 @@
 import { Application, Assets, Container, Rectangle, Sprite, Texture } from 'pixi.js';
 import { StateManager, GameState } from './core/state/StateManage';
+import { InputAction, InputManager } from './core/input/InputManager';
 
 import './index.css';
 
 import william from './assets/william_idle.png';
-import { InputAction, InputManager } from './core/input/InputManager';
+import simpleSceneImg from './assets/Sprite-0001.png';
 
 const state = new StateManager();
 state.setState(GameState.GAME);
@@ -27,14 +28,20 @@ const input = new InputManager();
   document.body.appendChild(app.canvas);
 
   // Set a container to hold the entities for now
-  const container: Container = new Container();
+  const world = new Container();
 
-  app.stage.addChild(container);
+  app.stage.addChild(world);
 
   const player = await loadPlayer();
+  const map = await loadMap();
 
-  container.addChild(player);
+  const worldWidth = map.width;
+  const worldHeight = map.height;
 
+  world.addChild(map);
+  world.addChild(player);
+
+  map.scale.set(2);
   player.scale.set(2);
 
   // This is the render loop (I guess)
@@ -87,4 +94,17 @@ function updatePlayer(player: Sprite, delta: number) {
 
   player.x += vx * delta;
   player.y += vy * delta;
+}
+
+async function loadMap() {
+  const baseTexture = await Assets.load(simpleSceneImg);
+  baseTexture.source.scaleMode = 'nearest';
+  baseTexture.source.style.magFilter = 'nearest';
+  baseTexture.source.style.minFilter = 'nearest';
+
+  const frame: Texture = new Texture(baseTexture);
+
+  const map: Sprite = new Sprite(frame);
+
+  return map;
 }
