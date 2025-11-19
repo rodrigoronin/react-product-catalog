@@ -1,4 +1,5 @@
 import { Application, Assets, Container, Rectangle, Sprite, Texture } from 'pixi.js';
+import { StateManager, GameState } from './core/state/StateManage';
 
 import "./index.css";
 
@@ -32,8 +33,13 @@ import william from './assets/william_idle.png';
   player.scale.set(2);
   container.position.set(app.screen.width / 2, app.screen.height / 2);
 
+  const state = new StateManager();
+  state.setState(GameState.GAME);
+
   // This is the render loop (I guess)
   app.ticker.add((time) => {
+    if (state.state === GameState.PAUSED) return;
+
     updatePlayer(player, time.deltaTime);
   });
 })();
