@@ -21,6 +21,7 @@ const [playerTexture, vaatiTexture] = Object.values(textures);
 
 const player: Player = new Player(playerTexture);
 player.container.position.set(100);
+
 const vaati: NPC = new NPC(vaatiTexture);
 vaati.container.position.x = 200;
 vaati.container.position.y = 100;
